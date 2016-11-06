@@ -96,15 +96,7 @@ def load(app):
 
         ## TODO: Expand to support multiple flags
         flags = [{'flag': request.form['key'], 'type': int(request.form['key_type[0]'])}]
-        prereqs = request.form.getlist('prereq[]')
-        for p in prereqs:
-            if not p.isdigit():
-                abort(400)
-        prereqs = ",".join(prereqs)
-        # Create challenge
-        chal = Challenges(request.form['name'], request.form['desc'], request.form['value'], request.form['category'],
-                          flags)
-        chal.prereqs = prereqs
+        chal = Challenges(request.form['name'], request.form['desc'], request.form['value'], request.form['category'], flags)
         if 'hidden' in request.form:
             chal.hidden = True
         else:
