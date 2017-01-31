@@ -15,13 +15,20 @@ def clean_filename(c):
         return True
 
 
+def get_s3_conn():
+    if app.config.get('ACCESS_KEY_ID') and app.config.get('SECRET_ACCESS_KEY'):
+        return boto.connect_s3(app.config.get('ACCESS_KEY_ID'), app.config.get('SECRET_ACCESS_KEY'))
+    else:
+        return boto.connect_s3()
+
+
 def load(app):
     def file_handler(path):
         f = Files.query.filter_by(location=path).first_or_404()
         chal = Challenges.query.filter_by(id=f.chal).first()
 
         if is_admin():
-            s3 = boto.connect_s3(app.config.get('ACCESS_KEY_ID'), app.config.get('SECRET_ACCESS_KEY'))
+            s3 = get_s3_conn()
             bucket_name = app.config.get('BUCKET')
             bucket = s3.get_bucket(bucket_name)
             k = Key(bucket)
@@ -37,7 +44,7 @@ def load(app):
             if chal.hidden:
                 abort(403)
 
-            s3 = boto.connect_s3(app.config.get('ACCESS_KEY_ID'), app.config.get('SECRET_ACCESS_KEY'))
+            s3 = get_s3_conn()
             bucket_name = app.config.get('BUCKET')
             bucket = s3.get_bucket(bucket_name)
             k = Key(bucket)
@@ -56,7 +63,7 @@ def load(app):
                 json_data['files'].append({'id': x.id, 'file': x.location})
             return jsonify(json_data)
         if request.method == 'POST':
-            s3 = boto.connect_s3(app.config.get('ACCESS_KEY_ID'), app.config.get('SECRET_ACCESS_KEY'))
+            s3 = get_s3_conn()
             bucket_name = app.config.get('BUCKET')
             bucket = s3.get_bucket(bucket_name)
             k = Key(bucket)
@@ -104,7 +111,7 @@ def load(app):
         db.session.add(chal)
         db.session.commit()
 
-        s3 = boto.connect_s3(app.config.get('ACCESS_KEY_ID'), app.config.get('SECRET_ACCESS_KEY'))
+        s3 = get_s3_conn()
         bucket_name = app.config.get('BUCKET')
         bucket = s3.get_bucket(bucket_name)
         k = Key(bucket)
@@ -136,7 +143,7 @@ def load(app):
             Keys.query.filter_by(chal=challenge.id).delete()
             files = Files.query.filter_by(chal=challenge.id).all()
             Files.query.filter_by(chal=challenge.id).delete()
-            s3 = boto.connect_s3(app.config.get('ACCESS_KEY_ID'), app.config.get('SECRET_ACCESS_KEY'))
+            s3 = get_s3_conn()
             bucket_name = app.config.get('BUCKET')
             bucket = s3.get_bucket(bucket_name)
             k = Key(bucket)
