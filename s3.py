@@ -15,7 +15,7 @@ def clean_filename(c):
         return True
 
 
-def get_s3_conn():
+def get_s3_conn(app):
     if app.config.get('ACCESS_KEY_ID') and app.config.get('SECRET_ACCESS_KEY'):
         return boto.connect_s3(app.config.get('ACCESS_KEY_ID'), app.config.get('SECRET_ACCESS_KEY'))
     else:
@@ -28,7 +28,7 @@ def load(app):
         chal = Challenges.query.filter_by(id=f.chal).first()
 
         if is_admin():
-            s3 = get_s3_conn()
+            s3 = get_s3_conn(app)
             bucket_name = app.config.get('BUCKET')
             bucket = s3.get_bucket(bucket_name)
             k = Key(bucket)
@@ -44,7 +44,7 @@ def load(app):
             if chal.hidden:
                 abort(403)
 
-            s3 = get_s3_conn()
+            s3 = get_s3_conn(app)
             bucket_name = app.config.get('BUCKET')
             bucket = s3.get_bucket(bucket_name)
             k = Key(bucket)
@@ -63,7 +63,7 @@ def load(app):
                 json_data['files'].append({'id': x.id, 'file': x.location})
             return jsonify(json_data)
         if request.method == 'POST':
-            s3 = get_s3_conn()
+            s3 = get_s3_conn(app)
             bucket_name = app.config.get('BUCKET')
             bucket = s3.get_bucket(bucket_name)
             k = Key(bucket)
@@ -95,7 +95,7 @@ def load(app):
 
                 db.session.commit()
                 db.session.close()
-                return redirect(url_for('admin.admin_chals'))
+                return redirect(url_for('admin_challenges.admin_chals'))
 
     @admins_only
     def admin_create_chal():
@@ -111,7 +111,7 @@ def load(app):
         db.session.add(chal)
         db.session.commit()
 
-        s3 = get_s3_conn()
+        s3 = get_s3_conn(app)
         bucket_name = app.config.get('BUCKET')
         bucket = s3.get_bucket(bucket_name)
         k = Key(bucket)
@@ -132,7 +132,7 @@ def load(app):
             db.session.add(db_f)
         db.session.commit()
         db.session.close()
-        return redirect(url_for('admin.admin_chals'))
+        return redirect(url_for('admin_challenges.admin_chals'))
 
     @admins_only
     def admin_delete_chal():
@@ -143,7 +143,7 @@ def load(app):
             Keys.query.filter_by(chal=challenge.id).delete()
             files = Files.query.filter_by(chal=challenge.id).all()
             Files.query.filter_by(chal=challenge.id).delete()
-            s3 = get_s3_conn()
+            s3 = get_s3_conn(app)
             bucket_name = app.config.get('BUCKET')
             bucket = s3.get_bucket(bucket_name)
             k = Key(bucket)
@@ -157,6 +157,6 @@ def load(app):
         return '1'
 
     app.view_functions['views.file_handler'] = file_handler
-    app.view_functions['admin.admin_create_chal'] = admin_create_chal
-    app.view_functions['admin.admin_files'] = admin_files
-    app.view_functions['admin.admin_delete_chal'] = admin_delete_chal
+    app.view_functions['admin_challenges.admin_create_chal'] = admin_create_chal
+    app.view_functions['admin_challenges.admin_files'] = admin_files
+    app.view_functions['admin_challenges.admin_delete_chal'] = admin_delete_chal
