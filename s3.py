@@ -42,8 +42,6 @@ def load(app):
         md5hash = hashlib.md5(os.urandom(64)).hexdigest()
 
         key = md5hash + '/' + filename
-        print file
-        print bucket, key
         s3.upload_fileobj(file, bucket, key)
 
         db_f = Files(chalid, key)
