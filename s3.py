@@ -47,7 +47,7 @@ def load(app):
         db_f = Files(chalid, key)
         db.session.add(db_f)
         db.session.commit()
-        return True
+        return db_f.id, (md5hash + '/' + filename)
 
     def delete_file(filename):
         s3, bucket = get_s3_conn(app)
