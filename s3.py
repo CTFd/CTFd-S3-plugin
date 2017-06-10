@@ -89,4 +89,3 @@ def load(app):
     utils.upload_file = upload_file
     utils.delete_file = delete_file
     app.view_functions['views.file_handler'] = file_handler
-
