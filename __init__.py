@@ -1,1 +1,1 @@
-from s3 import load
+from .s3 import load
