@@ -63,7 +63,7 @@ def load(app):
         chal = Challenges.query.filter_by(id=f.chal).first()
 
         s3, bucket = get_s3_conn(app)
-        if utils.is_admin():
+        if utils.is_admin() or chal is None:
             key = f.location
             url = s3.generate_presigned_url('get_object', Params = {
                 'Bucket': bucket,
