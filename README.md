@@ -4,7 +4,8 @@ Plugin that converts CTFd file uploads and deletions to Amazon S3 calls
 ## Installation
 
 1. To install clone this repository to the [CTFd/plugins](https://github.com/isislab/CTFd/tree/master/CTFd/plugins) folder.
-2. Edit [CTFd/config.py](https://github.com/isislab/CTFd/blob/master/CTFd/config.py) and add the following entries:
+2. Install the requirements specified in the [requirements.txt](https://github.com/CTFd/CTFd-S3-plugin/blob/master/requirements.txt) file. 
+3. Edit [CTFd/config.py](https://github.com/isislab/CTFd/blob/master/CTFd/config.py) and add the following entries:
   * ACCESS_KEY_ID
   * SECRET_ACCESS_KEY
   * BUCKET 
