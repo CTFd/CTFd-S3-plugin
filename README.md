@@ -1,5 +1,7 @@
 # CTFd-S3-plugin
-Plugin that converts CTFd file uploads and deletions to Amazon S3 calls
+Plugin that converts CTFd file uploads and deletions to Amazon S3 calls.
+
+AWS S3 support has been integrated into CTFd as of version 2.0. 
 
 ## Installation
 
